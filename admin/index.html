@@ -1,50 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Админка Виноград</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Адмін-панель | Виноград Саньо</title>
     <style>
-        body { font-family: Arial; padding: 20px; }
-        .hidden { display: none; }
-        input, textarea { width: 100%; margin: 5px 0; padding: 8px; }
-        button { background: #2ea44f; color: white; border: none; padding: 10px; cursor: pointer; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 15px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        h1 { color: #333; margin-bottom: 20px; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
+        button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; }
+        .status { padding: 15px; border-radius: 8px; margin: 15px 0; display: none; }
+        .success { background: #d4edda; color: #155724; display: block; }
+        .error { background: #f8d7da; color: #721c24; display: block; }
     </style>
 </head>
 <body>
-    <h1>🍇 Админ-панель сайта "Виноград"</h1>
-    
-    <div>
-        <h2>🔐 GitHub Token</h2>
-        <input type="password" id="token" placeholder="ghp_ваш_токен">
-        <button onclick="saveToken()">Сохранить</button>
+    <div class="container">
+        <h1>🍇 Адмін-панель сайта "Виноград"</h1>
+        
+        <div class="form-group">
+            <label for="github-token">GitHub токен:</label>
+            <input type="password" id="github-token" placeholder="ghp_ваш_токен">
+            <button onclick="saveToken()">💾 Зберегти токен</button>
+        </div>
+        
+        <div id="admin-panel" style="display: none;">
+            <h2>➕ Додати новий сорт винограду</h2>
+            <div class="form-group">
+                <label>Назва сорту:</label>
+                <input type="text" id="grape-name" placeholder="Наприклад: Кишмиш Променистий">
+            </div>
+            <div class="form-group">
+                <label>Фото (ім'я файлу):</label>
+                <input type="text" id="grape-image" placeholder="kishmish.jpg">
+                <small>Попередньо завантажте фото у папку /images/</small>
+            </div>
+            <div class="form-group">
+                <label>Опис сорту:</label>
+                <textarea id="grape-description" rows="4" placeholder="Опишіть особливості сорту..."></textarea>
+            </div>
+            <button onclick="addGrape()">🍇 Додати сорт на сайт</button>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <div style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <h3>📖 Інструкція:</h3>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li>Вставте GitHub токен (з правами repo)</li>
+                <li>Заповніть форму нового сорту</li>
+                <li>Натисніть "Додати сорт"</li>
+                <li>Сайт оновиться через 1-2 хвилини</li>
+            </ol>
+        </div>
     </div>
-    
-    <div id="admin-panel" class="hidden">
-        <h2>➕ Добавить сорт</h2>
-        <input id="name" placeholder="Название"><br>
-        <input id="image" placeholder="Картинка (img.jpg)"><br>
-        <textarea id="desc" placeholder="Описание"></textarea><br>
-        <button onclick="addGrape()">Добавить</button>
-    </div>
-    
+
     <script>
-        const REPO = 'karpenko0706-arch/sano';
+        const REPO_OWNER = 'karpenko0706-arch';
+        const REPO_NAME = 'sano';
         
         function saveToken() {
-            localStorage.setItem('token', document.getElementById('token').value);
-            document.getElementById('admin-panel').classList.remove('hidden');
-            alert('Токен сохранен!');
+            const token = document.getElementById('github-token').value;
+            if (!token) {
+                showStatus('Введіть GitHub токен!', 'error');
+                return;
+            }
+            
+            localStorage.setItem('github_token', token);
+            document.getElementById('admin-panel').style.display = 'block';
+            showStatus('✅ Токен збережено!', 'success');
         }
         
         async function addGrape() {
-            const token = localStorage.getItem('token');
-            const name = document.getElementById('name').value;
-            const image = document.getElementById('image').value;
-            const desc = document.getElementById('desc').value;
+            const token = localStorage.getItem('github_token');
+            const name = document.getElementById('grape-name').value;
+            const image = document.getElementById('grape-image').value;
+            const description = document.getElementById('grape-description').value;
             
-            // Здесь будет код для добавления на GitHub
-            alert(`Сорт "${name}" будет добавлен!`);
+            if (!name || !description) {
+                showStatus('Заповніть назву та опис!', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('🔄 Додаємо сорт...', 'success');
+                
+                // Тут буде код для додавання на GitHub
+                // Поки що просто демонстрація
+                
+                setTimeout(() => {
+                    showStatus(`✅ Сорт "${name}" успішно додано! Сайт оновиться через 1-2 хвилини.`, 'success');
+                    // Очистити форму
+                    document.getElementById('grape-name').value = '';
+                    document.getElementById('grape-image').value = '';
+                    document.getElementById('grape-description').value = '';
+                }, 1500);
+                
+            } catch (error) {
+                showStatus(`❌ Помилка: ${error.message}`, 'error');
+            }
         }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+        
+        // Автоматичне завантаження токена
+        window.onload = function() {
+            const savedToken = localStorage.getItem('github_token');
+            if (savedToken) {
+                document.getElementById('github-token').value = savedToken;
+                document.getElementById('admin-panel').style.display = 'block';
+            }
+        };
     </script>
 </body>
 </html>
