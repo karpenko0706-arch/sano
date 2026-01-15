@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Админка Виноград</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .hidden { display: none; }
+        input, textarea { width: 100%; margin: 5px 0; padding: 8px; }
+        button { background: #2ea44f; color: white; border: none; padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🍇 Админ-панель сайта "Виноград"</h1>
+    
+    <div>
+        <h2>🔐 GitHub Token</h2>
+        <input type="password" id="token" placeholder="ghp_ваш_токен">
+        <button onclick="saveToken()">Сохранить</button>
+    </div>
+    
+    <div id="admin-panel" class="hidden">
+        <h2>➕ Добавить сорт</h2>
+        <input id="name" placeholder="Название"><br>
+        <input id="image" placeholder="Картинка (img.jpg)"><br>
+        <textarea id="desc" placeholder="Описание"></textarea><br>
+        <button onclick="addGrape()">Добавить</button>
+    </div>
+    
+    <script>
+        const REPO = 'karpenko0706-arch/sano';
+        
+        function saveToken() {
+            localStorage.setItem('token', document.getElementById('token').value);
+            document.getElementById('admin-panel').classList.remove('hidden');
+            alert('Токен сохранен!');
+        }
+        
+        async function addGrape() {
+            const token = localStorage.getItem('token');
+            const name = document.getElementById('name').value;
+            const image = document.getElementById('image').value;
+            const desc = document.getElementById('desc').value;
+            
+            // Здесь будет код для добавления на GitHub
+            alert(`Сорт "${name}" будет добавлен!`);
+        }
+    </script>
+</body>
+</html>
